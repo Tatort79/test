@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "hapi": "^6.11.1",
-    "hapi-swaggered": "^1.1.2"
+    "hapi-swaggered": "^1.1.2",
+    "hapi-swaggered-ui": "^1.0.3"
   }
 }
