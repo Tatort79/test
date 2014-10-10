@@ -6,7 +6,7 @@ var server = new Hapi.Server('localhost', 8000, { labels: ['api'] });
 server.pack.register({
 	plugin: require('hapi-swaggered'),
 	options: {
-		// requiredTags have to be present for all routes exposed through hapi-swaggered
+        // requiredTags have to be present for all routes exposed through hapi-swaggered
 		requiredTags: ['api'],
 		produces: ['application/json'],
 		consumes: ['application/json'],
@@ -19,6 +19,7 @@ server.pack.register({
 			// default value 15 minutes... hapi caching options
 			expiresIn: 15 * 60 * 1000
 		},
+        stripPrefix: '/v1/api',
 		descriptions: {
 			token: 'Test description'
 		},
@@ -34,7 +35,7 @@ server.pack.register({
 }, {
 	select: 'api',
 	route: {
-		prefix: '/swagger'
+		prefix: '/docs'
 	}
 }, function (err) {
 });
@@ -44,9 +45,7 @@ server.pack.register({
 	plugin: require('hapi-swaggered-ui'),
 	options: {
 		title: 'Page Title',
-		// swaggerEndpoint is optional if hapi-swaggered-ui is used on the same server
-		// swaggerEndpoint: 'http://localhost:8000/swagger/api-docs',
-		// authorization is optional
+        magic: true,
 		authorization: {
 			field: 'Authorization',
 			scope: 'header',
@@ -56,25 +55,19 @@ server.pack.register({
 }, {
 	select: 'api',
 	route: {
-		prefix: '/docs'
+		prefix: '/v1'
 	}
 }, function (err) {
 });
 
+server.pack.register(require('./plugin'), {
+    route: {
+        prefix: '/v1/api'
+    }
+}, function (err) {});
 
-// Add the route
-server.route({
-	method: 'GET',
-	path: '/hello',
-	config: {
-		description: 'Say hello!',
-		notes: 'The user parameter defaults to \'stranger\' if unspecified',
-		tags: ['api'],
-		handler: function (request, reply) {
-			reply('hello world');
-		}
-	}
-});
+
+
 
 // Start the server
 server.start();
